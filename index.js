@@ -24,6 +24,7 @@ async function run(){
         const serviceCollection=client.db('kenakata').collection('products')
         const allCategoriy=client.db('kenakata').collection('categories');
         const bookingsCollection=client.db('kenakata').collection('bookings')
+        const usersCollection=client.db('kenakata').collection('users')
         
         app.get('/products',async(req,res)=>{
             const query={}
@@ -68,6 +69,12 @@ async function run(){
             const query={email:email};
             const bookings=await bookingsCollection.find(query).toArray();
             res.send(bookings)
+        })
+
+        app.post('/users',async(req,res)=>{
+            const user=req.body;
+            const result=await usersCollection.insertOne(user)
+            res.send(result)
         })
 
         
