@@ -22,7 +22,8 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run(){
     try{
         const serviceCollection=client.db('kenakata').collection('products')
-        const allCategoriy=client.db('kenakata').collection('categories')
+        const allCategoriy=client.db('kenakata').collection('categories');
+        const bookingsCollection=client.db('kenakata').collection('bookings')
         
         app.get('/products',async(req,res)=>{
             const query={}
@@ -55,6 +56,14 @@ async function run(){
             res.send(categories)
 
         })
+
+        app.post('/bookings',async(req,res)=>{
+            const booking=req.body
+            const result=await bookingsCollection.insertOne(booking)
+            res.send(result)
+        })
+
+        
 
        
       
