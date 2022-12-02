@@ -49,6 +49,12 @@ async function run(){
             res.send(products)
         });
 
+        app.post('/products',async(req,res)=>{
+            const product=req.body;
+            const result=await serviceCollection.insertOne(product)
+            res.send(result)
+        })
+
         app.get('/products/:id',async(req,res)=>{
             const id=req.params.id;
             const query={_id:ObjectId(id)}
@@ -80,11 +86,11 @@ async function run(){
             res.send(result)
         })
 
-        app.get('/bookings',verifyJWT,async(req,res)=>{
-            const decoded=req.decoded;
-            if(decoded.email !== req.query.email){
-                res.send(403).send({message:'unauthorized access'})
-            }
+        app.get('/bookings',async(req,res)=>{
+            // const decoded=req.decoded;
+            // if(decoded.email !== req.query.email){
+            //     res.send(403).send({message:'unauthorized access'})
+            // }
             const email=req.query.email;
             const query={email:email};
             const bookings=await bookingsCollection.find(query).toArray();
@@ -98,9 +104,38 @@ async function run(){
         
         })
 
+        app.get('/users',async(req,res)=>{
+            const query={};
+            const users=await usersCollection.find(query).toArray()
+            res.send(users)
+
+        })
+
+        
+
+        app.get('/users/admin/:email',async (req,res)=>{
+            const email=req.params.email;
+            const query={email}
+            const result=await usersCollection.findOne(query)
+            // res.send({isAdmin:user?.role==='admin'})
+        })
+
         app.post('/users',async(req,res)=>{
             const user=req.body;
             const result=await usersCollection.insertOne(user)
+            res.send(result)
+        })
+
+        app.put('/users/admin/:id',async (req,res)=>{
+            const id =req.params.id;
+            const filter={id:ObjectId(id)}
+            const options={upsert:true}
+            const updateDoc={
+                $set:{
+                    role:"admin"
+                }
+            }
+            const result=await usersCollection.updateOne(filter,updateDoc,options);
             res.send(result)
         })
 
